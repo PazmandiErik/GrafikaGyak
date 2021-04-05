@@ -1,0 +1,2 @@
+# GrafikaGyak
+Féléves feladat leírása:

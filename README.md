@@ -1,2 +1,2 @@
-# GrafikaGyak
-Féléves feladat leírása:
+# Féléves feladat leírása
+

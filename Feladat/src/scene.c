@@ -19,26 +19,14 @@ struct
 void init_scene(Scene* scene)
 {	
 
-/*    load_model(&(scene->farm), "data/cube.obj");*/
-    scene->texture_id_ground = load_texture("data/grass.jpg"); 
-
-    scene->material.ambient.red = 1.0;
-    scene->material.ambient.green = 1.0;
-    scene->material.ambient.blue = 1.0;
-
-    scene->material.diffuse.red = 1.0;
-    scene->material.diffuse.green = 1.0;
-    scene->material.diffuse.blue = 1.0;
-
-    scene->material.specular.red = 0.0;
-    scene->material.specular.green = 0.0;
-    scene->material.specular.blue = 0.0;
-
-    scene->material.shininess = 0.0;
+    load_model(&(scene->fattree), "data/fattree.obj");
 	
-	diffuseLight.oldR = 5.5f;
-	diffuseLight.oldG = 5.5f;
-	diffuseLight.oldB = 5.5f;
+    scene->texture_id_ground = load_texture("data/grass.jpg"); 
+	scene->texture_id_fattree = load_texture("data/fattree.png");
+
+	diffuseLight.oldR = 0.8f;
+	diffuseLight.oldG = 0.8f;
+	diffuseLight.oldB = 0.8f;
 	diffuseLight.oldA = 1.0f;
 }
 
@@ -65,60 +53,36 @@ void set_lighting(float r, float g, float b, float a)
     float ambient_light[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     float diffuse_light[] = { diffuseLight.oldR, diffuseLight.oldG, diffuseLight.oldB, diffuseLight.oldA};
     float specular_light[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-    float position[] = { 0.0f, 0.0f, 10.0f, 1.0f };
+    float position[] = { 0.0f, 0.0f, 100.0f, 1.0f };
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light);
     glLightfv(GL_LIGHT0, GL_SPECULAR, specular_light);
     glLightfv(GL_LIGHT0, GL_POSITION, position);
-/*	
-	float light2_ambient[] = { 1.0f, 1.0f, 1.0f, 1.0f};
-	float light2_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f};
-	float light2_specular[] = { 1.0f, 1.0f, .0f, 1.0f};
-	float light2_position[] = { 0.0f, 0.0f, 0.0f, 1.0f};
-	
-    glLightfv(GL_LIGHT1, GL_AMBIENT, light2_ambient);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, light2_diffuse);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, light2_specular);
-    glLightfv(GL_LIGHT1, GL_POSITION, light2_position);
-*/
-}
-
-void set_material(const Material* material)
-{
-    float ambient_material_color[] = {
-        material->ambient.red,
-        material->ambient.green,
-        material->ambient.blue
-    };
-
-    float diffuse_material_color[] = {
-        material->diffuse.red,
-        material->diffuse.green,
-        material->diffuse.blue
-    };
-
-    float specular_material_color[] = {
-        material->specular.red,
-        material->specular.green,
-        material->specular.blue
-    };
-
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_material_color);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_material_color);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_material_color);
-
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &(material->shininess));
 }
 
 void draw_scene(const Scene* scene)
 {
-/*    set_material(&(scene->material));*/
+	// Set lighting
     set_lighting(0.0f, 0.0f, 0.0f, 0.0f);
 	
+	// Draw ground
+	draw_ground(scene);
+	
+	// Draw model: fattree
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id_fattree);
+	glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+	glScalef(0.5f, 0.5f, 0.5f);
+	glTranslatef(35, 0, 25);
+    draw_model(&(scene->fattree));
+	glPopMatrix();	
+}
+
+void draw_ground(const Scene* scene)
+{
 	glBindTexture(GL_TEXTURE_2D, scene->texture_id_ground);
 	glBegin(GL_QUADS);
-
 		glTexCoord2f(0.0f, 50.0f);                   
 		glVertex2i(-50.0f, 50.0f);
 
@@ -130,13 +94,8 @@ void draw_scene(const Scene* scene)
 
 		glTexCoord2f(50.0f, 50.0f);
 		glVertex2i(50.0f, 50.0f);
-	glEnd();
-
-	
-/*	glPushMatrix();
-	glRotatef(90,1,0,0);
-	glTranslatef(0,-2,0);
-    draw_model(&(scene->farm));
-	glPopMatrix();*/
+	glEnd();	
 }
+
+
 

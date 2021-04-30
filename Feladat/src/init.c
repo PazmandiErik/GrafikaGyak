@@ -2,8 +2,10 @@
 
 #include <GL/glut.h>
 
+
 float fogDensity = 0.1;
 static float fog_color[] = {0.0, 0.0, 0.0, 1.0};
+
 
 void init_opengl()
 {
@@ -29,4 +31,5 @@ void init_opengl()
 	glFogf(GL_FOG_DENSITY, fogDensity);
 	glFogfv(GL_FOG_COLOR, fog_color);
 	glClearColor(0.0, 0.0, 0.0, 1.0);
+
 }

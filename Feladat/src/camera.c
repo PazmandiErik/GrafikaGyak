@@ -6,31 +6,59 @@
 
 void init_camera(Camera* camera)
 {
-    camera->position.x = 0.0;
-    camera->position.y = 0.0;
-    camera->position.z = 1.0;
+    camera->worldPosition.x = 0.0;
+    camera->worldPosition.y = 0.0;
+    camera->worldPosition.z = 1.0;
     camera->rotation.x = 0.0;
     camera->rotation.y = 0.0;
     camera->rotation.z = 0.0;
     camera->speed.x = 0.0;
     camera->speed.y = 0.0;
     camera->speed.z = 0.0;
-
-    is_preview_visible = FALSE;
+	
+    camera->position.x = 0.0;
+    camera->position.y = 0.0;
+    camera->position.z = 1.0;
+	
 }
 
 void update_camera(Camera* camera, double time)
 {
     double angle;
     double side_angle;
-
+//	int headBobYDirection;
+	
     angle = degree_to_radian(camera->rotation.z);
     side_angle = degree_to_radian(camera->rotation.z + 90.0);
 
-    camera->position.x += cos(angle) * camera->speed.y * time;
-    camera->position.y += sin(angle) * camera->speed.y * time;
-    camera->position.x += cos(side_angle) * camera->speed.x * time;
-    camera->position.y += sin(side_angle) * camera->speed.x * time;
+	vec3 newPosition;
+	newPosition.x = camera->worldPosition.x + cos(angle) * camera->speed.y * time;
+	newPosition.y = camera->worldPosition.y + sin(angle) * camera->speed.y * time;
+	newPosition.x += cos(side_angle) * camera->speed.x * time;
+	newPosition.y += sin(side_angle) * camera->speed.x * time;
+	
+	if (check_collisions(newPosition) == 0)
+	{	
+		camera->worldPosition.x = newPosition.x;
+		camera->worldPosition.y = newPosition.y;
+	}
+/*	
+	if ((camera->position.z) > (camera->worldPosition.z + 1))
+	{
+		headBobYDirection = -1;
+	}
+	else if ((camera->position.z) < (camera->worldPosition.z -1))
+	{
+		headBobYDirection = 1;
+	}
+	*/
+    camera->position.x = (camera->worldPosition.x);
+    camera->position.y = (camera->worldPosition.y);
+	camera->position.z = (camera->worldPosition.z);
+//	camera->position.z = (camera->worldPosition.z) + ((camera->position.z+sin(camera->position.z))*(camera->speed.y));
+ //   camera->position.z = (camera->worldPosition.z) + (camera->speed.y*sin(camera->position.z));
+	
+//	printf("%f - %f\n", camera->position.z, camera->speed.y);
 }
 
 void set_view(const Camera* camera)
@@ -71,11 +99,36 @@ void rotate_camera(Camera* camera, double horizontal, double vertical)
 
 void set_camera_speed(Camera* camera, double speed)
 {
-    camera->speed.y = speed;
-}
+		camera->speed.y = speed;
+}	
 
 void set_camera_side_speed(Camera* camera, double speed)
 {
-    camera->speed.x = speed;
+		camera->speed.x = speed;
 }
 
+int check_collisions(vec3 newPosition)
+{
+			
+	/* Collision detection: fattree
+		posX: 17
+		posY: -12.5
+		boxSizeX: 3
+		boxSizeY: 3
+	*/
+	if (calc_collision(newPosition, 17, -12.5, 3, 3) == 1)
+		return 1;
+	
+	// No collision found
+	return 0;
+}
+
+int calc_collision(vec3 newPosition, float posX, float posY, float boxSizeX, float boxSizeY)
+{
+	
+	if ((newPosition.x > posX - boxSizeX) && (newPosition.x < posX + boxSizeX))
+		if ((newPosition.y > posY - boxSizeY) && (newPosition.y < posY + boxSizeY))
+			return 1;
+	return 0;
+	
+}

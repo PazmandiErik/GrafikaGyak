@@ -29,13 +29,6 @@ int main(int argc, char* argv[])
 
     window = glutCreateWindow("Scene_Main");
     glutSetWindow(window);
-/*	
-	
-	glutFullScreen();
-	glutSetCursor(GLUT_CURSOR_NONE);
-*/	
-	
-	
 
     init_opengl();
     init_scene(&scene);

@@ -5,13 +5,15 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+
+
 struct {
     int x;
     int y;
 } mouse_position;
 
 int drawHelp = 0;
-unsigned char helpText[] = "Help: \n\nUse the WASD keys to move.\nUse the mouse to look around.\n\n+: Increase lighting intensity\n-: Decrease lighting intensity\nF1: Toggle help\nEsc: Exit game";
+unsigned char helpText[] = "Help: \n\nUse the WASD keys to move.\nHold down LMB then use the mouse to look around.\n\n+: Increase lighting intensity\n-: Decrease lighting intensity\nF1: Toggle help\nEsc: Exit game";
 
 void display()
 {
@@ -64,19 +66,27 @@ void reshape(GLsizei width, GLsizei height)
     gluPerspective(VIEWPORT_ASPECT, VIEWPORT_RATIO, 0.01, 10000.0);
 }
 
-
+int lmbDown = 0;
 void mouse(int button, int state, int x, int y)
 {
-    mouse_position.x = x;
-    mouse_position.y = y;
+	
+	if (button == 0) 
+	{
+		lmbDown = !lmbDown;
+	}
+	mouse_position.x = x;
+	mouse_position.y = y;
 }
 
 void motion(int x, int y)
-{
-    rotate_camera(&camera, mouse_position.x - x, mouse_position.y - y);
-    mouse_position.x = x;
-    mouse_position.y = y;
-    glutPostRedisplay();
+{	
+	if (lmbDown)
+	{
+		rotate_camera(&camera, mouse_position.x - x, mouse_position.y - y);
+		mouse_position.x = x;
+		mouse_position.y = y;
+		glutPostRedisplay();
+	}
 }
 
 void keyboard(unsigned char key, int x, int y)

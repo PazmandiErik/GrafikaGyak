@@ -6,8 +6,6 @@
 #include <obj/draw.h>
 
 
-
-
 struct 
 {
 	float oldR;
@@ -15,14 +13,14 @@ struct
 	float oldB;
 	float oldA;
 	
-} ambientLight;
+} diffuseLight;
+
 
 void init_scene(Scene* scene)
 {	
 
-//    load_model(&(scene->farm), "data/cube.obj");
-    scene->texture_id = load_texture("data/grass.jpg"); 
-    glBindTexture(GL_TEXTURE_2D, scene->texture_id);
+/*    load_model(&(scene->farm), "data/cube.obj");*/
+    scene->texture_id_ground = load_texture("data/grass.jpg"); 
 
     scene->material.ambient.red = 1.0;
     scene->material.ambient.green = 1.0;
@@ -30,7 +28,7 @@ void init_scene(Scene* scene)
 
     scene->material.diffuse.red = 1.0;
     scene->material.diffuse.green = 1.0;
-    scene->material.diffuse.blue	 = 1.0;
+    scene->material.diffuse.blue = 1.0;
 
     scene->material.specular.red = 0.0;
     scene->material.specular.green = 0.0;
@@ -38,17 +36,17 @@ void init_scene(Scene* scene)
 
     scene->material.shininess = 0.0;
 	
-	ambientLight.oldR = 0.5f;
-	ambientLight.oldG = 0.5f;
-	ambientLight.oldB = 0.5f;
-	ambientLight.oldA = 1.0f;
+	diffuseLight.oldR = 5.5f;
+	diffuseLight.oldG = 5.5f;
+	diffuseLight.oldB = 5.5f;
+	diffuseLight.oldA = 1.0f;
 }
 
 float ConstrainValue(float val)
 {
-	if (val > 1.0f)
+	if (val > 10.0f)
 	{
-		val = 1.0f;
+		val = 10.0f;
 	}
 	else if (val < 0.0f)
 	{
@@ -59,13 +57,13 @@ float ConstrainValue(float val)
 
 void set_lighting(float r, float g, float b, float a)
 {
- 	ambientLight.oldR = ConstrainValue(ambientLight.oldR + r);
-	ambientLight.oldG = ConstrainValue(ambientLight.oldG + g);
-	ambientLight.oldB = ConstrainValue(ambientLight.oldB + b);
-	ambientLight.oldA = ConstrainValue(ambientLight.oldA + a);		
+ 	diffuseLight.oldR = ConstrainValue(diffuseLight.oldR + r);
+	diffuseLight.oldG = ConstrainValue(diffuseLight.oldG + g);
+	diffuseLight.oldB = ConstrainValue(diffuseLight.oldB + b);
+	diffuseLight.oldA = ConstrainValue(diffuseLight.oldA + a);		
 	
-    float ambient_light[] = { ambientLight.oldR, ambientLight.oldG, ambientLight.oldB, ambientLight.oldA};
-    float diffuse_light[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float ambient_light[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float diffuse_light[] = { diffuseLight.oldR, diffuseLight.oldG, diffuseLight.oldB, diffuseLight.oldA};
     float specular_light[] = { 0.5f, 0.5f, 0.5f, 1.0f };
     float position[] = { 0.0f, 0.0f, 10.0f, 1.0f };
 
@@ -73,17 +71,17 @@ void set_lighting(float r, float g, float b, float a)
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light);
     glLightfv(GL_LIGHT0, GL_SPECULAR, specular_light);
     glLightfv(GL_LIGHT0, GL_POSITION, position);
-	
-	float light2_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f};
-	float light2_diffuse[] = { 0.0f, 0.0f, 0.0f, 1.0f};
-	float light2_specular[] = { 0.0f, 0.0f, 0.0f, 1.0f};
+/*	
+	float light2_ambient[] = { 1.0f, 1.0f, 1.0f, 1.0f};
+	float light2_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f};
+	float light2_specular[] = { 1.0f, 1.0f, .0f, 1.0f};
 	float light2_position[] = { 0.0f, 0.0f, 0.0f, 1.0f};
 	
     glLightfv(GL_LIGHT1, GL_AMBIENT, light2_ambient);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, light2_diffuse);
     glLightfv(GL_LIGHT1, GL_SPECULAR, light2_specular);
     glLightfv(GL_LIGHT1, GL_POSITION, light2_position);
-	
+*/
 }
 
 void set_material(const Material* material)
@@ -115,29 +113,25 @@ void set_material(const Material* material)
 
 void draw_scene(const Scene* scene)
 {
-//    set_material(&(scene->material));
-    set_lighting(0.0f,0.0f,0.0f,0);
+/*    set_material(&(scene->material));*/
+    set_lighting(0.0f, 0.0f, 0.0f, 0.0f);
 	
-	glBindTexture(GL_TEXTURE_2D, scene->texture_id);
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id_ground);
 	glBegin(GL_QUADS);
-		// Bottom left
+
 		glTexCoord2f(0.0f, 50.0f);                   
 		glVertex2i(-50.0f, 50.0f);
 
-		// Top left
 		glTexCoord2f(0.0f, 0.0f);
 		glVertex2i(-50.0f, -50.0f);
 
-		// Top right
 		glTexCoord2f(50.0f, 0.0f);
 		glVertex2i(50.0f, -50.0f);
 
-		// Bottom right
 		glTexCoord2f(50.0f, 50.0f);
 		glVertex2i(50.0f, 50.0f);
 	glEnd();
 
-	
 	
 /*	glPushMatrix();
 	glRotatef(90,1,0,0);

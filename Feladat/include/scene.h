@@ -10,7 +10,7 @@ typedef struct Scene
 {
     Model farm;
     Material material;
-    GLuint texture_id;
+    GLuint texture_id_ground;
 } Scene;
 
 /**

@@ -5,9 +5,6 @@
 
 #include <stdio.h>
 
-/**
- * Set the callbacks for GLUT.
- */
 void set_callbacks()
 {
     glutDisplayFunc(display);
@@ -17,11 +14,10 @@ void set_callbacks()
     glutKeyboardFunc(keyboard);
     glutKeyboardUpFunc(keyboard_up);
     glutIdleFunc(idle);
+	glutSpecialFunc(keyboard_special);
 }
 
-/**
- * Main function
- */
+
 int main(int argc, char* argv[])
 {
     int window;
@@ -33,6 +29,13 @@ int main(int argc, char* argv[])
 
     window = glutCreateWindow("Scene_Main");
     glutSetWindow(window);
+/*	
+	
+	glutFullScreen();
+	glutSetCursor(GLUT_CURSOR_NONE);
+*/	
+	
+	
 
     init_opengl();
     init_scene(&scene);

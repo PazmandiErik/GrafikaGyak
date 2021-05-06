@@ -1,8 +1,10 @@
 #include "camera.h"
+#include "callbacks.h"
 
 #include <GL/glut.h>
 
 #include <math.h>
+
 
 void init_camera(Camera* camera)
 {
@@ -56,9 +58,12 @@ void update_camera(Camera* camera, double time)
     camera->position.y = (camera->worldPosition.y);
 	camera->position.z = (camera->worldPosition.z);
 //	camera->position.z = (camera->worldPosition.z) + ((camera->position.z+sin(camera->position.z))*(camera->speed.y));
- //   camera->position.z = (camera->worldPosition.z) + (camera->speed.y*sin(camera->position.z));
+//  camera->position.z = (camera->worldPosition.z) + (camera->speed.y*sin(camera->position.z));
 	
 //	printf("%f - %f\n", camera->position.z, camera->speed.y);
+
+//	printf("x: %f, y: %f\n", camera->position.x, camera->position.y);
+
 }
 
 void set_view(const Camera* camera)
@@ -109,8 +114,17 @@ void set_camera_side_speed(Camera* camera, double speed)
 
 int check_collisions(vec3 newPosition)
 {
-			
-	/* Collision detection: fattree
+//	printf("x: %f, y: %f, z: %f\n", newPosition.x, newPosition.y, newPosition.z);
+	
+	/* map Y edges */	
+	if ((newPosition.y < -49) || (newPosition.y > 49))
+		return 1;
+	
+	/* map X edges */
+	if ((newPosition.x < -49) || (newPosition.x > 49))
+		return 1;	
+	
+	/* fattree1
 		posX: 17
 		posY: -12.5
 		boxSizeX: 3
@@ -118,6 +132,33 @@ int check_collisions(vec3 newPosition)
 	*/
 	if (calc_collision(newPosition, 17, -12.5, 3, 3) == 1)
 		return 1;
+	
+	/* fattree2
+		posX: -3.16
+		posY: -1.3
+		boxSizeX: 0.5
+		boxSizeY: 0.5
+	*/	
+	if (calc_collision(newPosition, -3.16f, -1.3f, 0.5f, 0.5f) == 1)
+		return 1;
+	
+	/* hotdog - win condition
+		posX: 38.05
+		posY: -27.9
+		boxSizeX: 0.2
+		boxSizeY: 0.2	
+	*/
+	if (calc_collision(newPosition, 38.05f, -27.9f, 0.2f, 0.2f) == 1)
+	{
+		glutMouseFunc(NULL);
+		glutMotionFunc(NULL);
+		glutKeyboardUpFunc(NULL);
+		glutSpecialFunc(NULL);				
+	
+		UpdateDrawFinalVariable();
+		
+		return 1;
+	}
 	
 	// No collision found
 	return 0;

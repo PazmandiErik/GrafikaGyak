@@ -9,10 +9,14 @@
 typedef struct Scene
 {
     Model fattree;
+	Model hotdog;
 	
-    Material material;
     GLuint texture_id_ground;
 	GLuint texture_id_fattree;
+	GLuint texture_id_hotdog;
+	GLuint texture_id_wall;
+	GLuint texture_id_water;
+	
 } Scene;
 
 /* Scene initialization */
@@ -26,5 +30,11 @@ void draw_scene(const Scene* scene);
 
 /* Draw ground */
 void draw_ground(const Scene* scene);
+
+/* Draw walls */
+void draw_walls(const Scene* scene);
+
+/* Draw water */
+void draw_water(const Scene* scene);
 
 #endif /* SCENE_H */

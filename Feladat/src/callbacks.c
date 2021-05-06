@@ -6,14 +6,26 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 
-
 struct {
     int x;
     int y;
 } mouse_position;
 
+int fogEnabled = 1;
+
 int drawHelp = 0;
-unsigned char helpText[] = "Help: \n\nUse the WASD keys to move.\nHold down LMB then use the mouse to look around.\n\n+: Increase lighting intensity\n-: Decrease lighting intensity\nF1: Toggle help\nEsc: Exit game";
+unsigned char helpText[] = "Goal: Find the hot-dog!\n\nControls\n-----\nUse the WASD keys to move.\nHold down LMB then use the mouse to look around.\n\n+: Increase lighting intensity\n-: Decrease lighting intensity\nF1: Toggle help\nEsc: Exit game";
+
+int drawInitial = 1;
+unsigned char initialText[] = "Find the hot-dog!";
+
+int drawFinal = 0;
+unsigned char finalText[] = "      You Win!\n Press Esc to quit.";
+
+void UpdateDrawFinalVariable()
+{
+	drawFinal = 1;
+}
 
 void display()
 {
@@ -26,8 +38,42 @@ void display()
     draw_scene(&scene);
     glPopMatrix();
 	
+	if (drawInitial)
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_FOG);
+		glDisable(GL_LIGHTING);
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();		
+		glRasterPos2f(-0.1f, 0.7f);	
+		glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, initialText);
+		glPopMatrix();
+		glEnable(GL_LIGHTING);
+		if (fogEnabled)
+			glEnable(GL_FOG);		
+	}	
+	
+	if (drawFinal)
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_FOG);
+		glDisable(GL_LIGHTING);
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();		
+		glRasterPos2f(-0.1f, 0.7f);	
+		glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, finalText);
+		glPopMatrix();
+		glEnable(GL_LIGHTING);
+		if (fogEnabled)
+			glEnable(GL_FOG);		
+	}
+	
 	if (drawHelp)
 	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_FOG);
 		glDisable(GL_LIGHTING);
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
@@ -36,6 +82,8 @@ void display()
 		glutBitmapString(GLUT_BITMAP_HELVETICA_18, helpText);
 		glPopMatrix();
 		glEnable(GL_LIGHTING);
+		if (fogEnabled)
+			glEnable(GL_FOG);
 	}	
 	
     glutSwapBuffers();
@@ -91,17 +139,22 @@ void motion(int x, int y)
 
 void keyboard(unsigned char key, int x, int y)
 {
+	drawInitial = 0;
     switch (key) {
     case 'w':
+		if(!drawFinal)
         set_camera_speed(&camera, 4);
         break;
     case 's':
+		if(!drawFinal)
         set_camera_speed(&camera, -4);
         break;
     case 'a':
+		if(!drawFinal)
         set_camera_side_speed(&camera, 4);
         break;
     case 'd':
+		if(!drawFinal)
         set_camera_side_speed(&camera, -4);
         break;
 	case '+':
@@ -119,12 +172,10 @@ void keyboard(unsigned char key, int x, int y)
 
 void keyboard_special(int key, int x, int y)
 {
+	drawInitial = 0;
 	switch(key){
 	case GLUT_KEY_F1:
 		drawHelp = !drawHelp;
-		break;
-	case GLUT_KEY_F4:
-		exit(0);
 		break;
 	}
 	glutPostRedisplay();
@@ -132,7 +183,6 @@ void keyboard_special(int key, int x, int y)
 
 void keyboard_up(unsigned char key, int x, int y)
 {
-
     switch (key) {
     case 'w':
     case 's':

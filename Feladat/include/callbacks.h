@@ -18,4 +18,6 @@ void keyboard_up(unsigned char key, int x, int y);
 void keyboard_special(int key, int x, int y);
 void idle();
 
+void UpdateDrawFinalVariable();
+
 #endif /* CALLBACKS_H */
